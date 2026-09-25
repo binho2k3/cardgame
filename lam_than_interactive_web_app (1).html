@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Làm Thân - Càng hỏi, càng thân</title>
+
+  <!-- iOS Apple Web App Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Làm Thân">
+  <meta name="theme-color" content="#fbf7f2">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Apple Touch Icon (iOS Home Screen Icon) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='42' fill='%23e06d53'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='68' fill='white'>LT</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23e06d53'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='38' fill='white'>LT</text></svg>">
+
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Audio Synthesis (Tone.js) & Lucide Icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-main: #fbf7f2;
+      --card-bg: #ffffff;
+      --text-main: #231f20;
+      --text-muted: #857e7b;
+      --accent: #e06d53;
+      --accent-soft: #faeee9;
+      --card-border: #ede6df;
+      --phone-frame-bg: #0f172a;
+    }
+
+    .theme-cream {
+      --bg-main: #fcf9f2;
+      --card-bg: #ffffff;
+      --text-main: #242220;
+      --text-muted: #827e78;
+      --accent: #e2725b;
+      --accent-soft: #fcf1ed;
+      --card-border: #efe7dc;
+    }
+
+    .theme-rose {
+      --bg-main: #fbf2f4;
+      --card-bg: #ffffff;
+      --text-main: #2e1c22;
+      --text-muted: #8f747d;
+      --accent: #dc4b74;
+      --accent-soft: #fdeaf0;
+      --card-border: #f2d9e1;
+    }
+
+    .theme-matcha {
+      --bg-main: #f3f6f1;
+      --card-bg: #ffffff;
+      --text-main: #1d261b;
+      --text-muted: #738070;
+      --accent: #4d7c57;
+      --accent-soft: #eaf1eb;
+      --card-border: #dae3d8;
+    }
+
+    .theme-night {
+      --bg-main: #121316;
+      --card-bg: #1c1d22;
+      --text-main: #f2f2f4;
+      --text-muted: #8e909a;
+      --accent: #f28b74;
+      --accent-soft: #281e20;
+      --card-border: #2a2c35;
+    }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Mobile mockup shell container for desktop viewing */
+    .mobile-shell {
+      height: 100%;
+      height: 100dvh;
+      max-height: 920px;
+      width: 100%;
+      max-width: 428px; /* Standard iPhone Pro Max width */
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 0 0 10px #1e293b;
+      border-radius: 44px;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* Standalone iOS Mode when installed on iPhone */
+    @media all and (display-mode: standalone) {
+      .mobile-shell {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        max-height: 100dvh !important;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      #notch-bar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .mobile-shell {
+        max-width: 100%;
+        max-height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+
+    .serif-title {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .perspective-1000 {
+      perspective: 1200px;
+    }
+
+    .card-preserve-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    .card-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    .card-shadow-layer {
+      box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.1), 0 0 1px 1px rgba(0,0,0,0.04);
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-12px) scale(1.03); }
+    }
+
+    .animate-float-slow {
+      animation: floatOrb 7s ease-in-out infinite;
+    }
+    .animate-float-delayed {
+      animation: floatOrb 9s ease-in-out 2s infinite;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 flex items-center justify-center min-h-screen p-0 sm:p-4 select-none">
+
+  <!-- PHONE MOCKUP SHELL -->
+  <div class="mobile-shell theme-cream">
+
+    <!-- TOP NOTCH / DYNAMIC ISLAND & STATUS BAR -->
+    <div class="w-full pt-3 px-6 pb-1 flex items-center justify-between text-[11px] font-semibold tracking-wider text-[var(--text-muted)] shrink-0 z-30">
+      <span id="phone-clock">09:41</span>
+      <!-- Dynamic Island Capsule -->
+      <div class="w-24 h-4 bg-black/85 dark:bg-black/95 rounded-full flex items-center justify-center px-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500/80 mr-auto"></div>
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <i data-lucide="signal" class="w-3.5 h-3.5"></i>
+        <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+        <i data-lucide="battery-medium" class="w-4 h-4"></i>
+      </div>
+    </div>
+
+    <!-- BACKGROUND AMBIENT ORBS -->
+    <div aria-hidden="true" class="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-70">
+      <div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-orange-200/40 blur-3xl animate-float-slow"></div>
+      <div class="absolute top-1/2 -right-16 w-72 h-72 rounded-full bg-pink-200/40 blur-3xl animate-float-delayed"></div>
+      <div class="absolute -bottom-20 left-1/4 w-60 h-60 rounded-full bg-amber-100/50 blur-3xl animate-float-slow"></div>
+    </div>
+
+    <!-- APP HEADER -->
+    <header class="w-full px-5 py-2 flex items-center justify-between shrink-0 z-20 border-b border-[var(--card-border)]/40">
+      <button id="btn-brand-home" class="flex items-center gap-2 group cursor-pointer active:scale-95 transition-transform">
+        <span class="w-8 h-8 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center font-bold text-xs border border-[var(--accent)]/30">
+          LT
+        </span>
+        <div class="text-left leading-none">
+          <span class="font-extrabold text-base tracking-tight block">Làm Thân</span>
+          <span class="text-[9px] text-[var(--text-muted)] font-medium">Càng hỏi, càng thân</span>
+        </div>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <!-- iOS App Install Button -->
+        <button id="btn-ios-install" onclick="openIosInstallModal()" title="Cài app vào iPhone" class="px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-[var(--accent)]/30 bg-[var(--accent-soft)] text-[var(--accent)] text-[10px] font-bold shadow-sm active:scale-90 transition">
+          <i data-lucide="download" class="w-3 h-3"></i>
+          <span>Cài App</span>
+        </button>
+
+        <!-- Sound toggle -->
+        <button id="btn-toggle-sound" title="Bật/Tắt âm thanh" class="w-8 h-8 rounded-full flex items-center justify-center border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-main)] shadow-sm active:scale-90 transition">
+          <i data-lucide="volume-2" class="w-3.5 h-3.5" id="sound-icon"></i>
+        </button>
+
+        <!-- Coffee / Donate button -->
+        <button id="btn-open-donate" title="Mời ly cà phê" class="w-8 h-8 rounded-full flex items-center justify-center border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-main)] shadow-sm active:scale-90 transition">
+          <i data-lucide="coffee" class="w-3.5 h-3.5 text-amber-600"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- SCROLLABLE MAIN CONTENT FOR SCREENS -->
+    <main class="w-full flex-1 overflow-y-auto overflow-x-hidden no-scrollbar px-4 py-3 flex flex-col justify-start relative z-10">
+
+      <!-- ============================================== -->
+      <!-- SCREEN 1: HOME & DECK SELECTION                -->
+      <!-- ============================================== -->
+      <section id="screen-home" class="flex flex-col space-y-4 pb-16">
+        <div class="text-center pt-1">
+          <span class="inline-block px-3 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--accent-soft)] text-[var(--accent)] mb-1.5">
+            Trò chơi kết nối tâm sự
+          </span>
+          <h1 class="serif-title text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-main)] leading-snug">
+            Càng hỏi, <em class="italic text-[var(--accent)]">càng thân.</em>
+          </h1>
+          <p class="text-[11px] text-[var(--text-muted)] mt-1 font-medium">
+            Rút thẻ bài lần lượt cùng bạn bè hoặc người yêu
+          </p>
+        </div>
+
+        <!-- Decks List Grid / Stack -->
+        <div class="space-y-2.5" id="deck-list">
+          
+          <div onclick="selectDeck('connection')" class="cursor-pointer p-3.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] shadow-sm hover:border-[var(--accent)]/50 active:scale-[0.98] transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/40 text-orange-600 flex items-center justify-center text-lg">
+                🌱
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-xs sm:text-sm">Hiểu Nhau Hơn</h3>
+                <p class="text-[11px] text-[var(--text-muted)]">Câu hỏi nhẹ nhàng mở lòng ban đầu</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[var(--accent-soft)] text-[var(--accent)]">24 câu</span>
+          </div>
+
+          <div onclick="selectDeck('deep')" class="cursor-pointer p-3.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] shadow-sm hover:border-[var(--accent)]/50 active:scale-[0.98] transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center text-lg">
+                🌌
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-xs sm:text-sm">Sâu Sắc & Tâm Sự</h3>
+                <p class="text-[11px] text-[var(--text-muted)]">Tổn thương, ước mơ, góc nhìn cuộc sống</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600">20 câu</span>
+          </div>
+
+          <div onclick="selectDeck('couple')" class="cursor-pointer p-3.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] shadow-sm hover:border-[var(--accent)]/50 active:scale-[0.98] transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-950/40 text-pink-600 flex items-center justify-center text-lg">
+                💌
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-xs sm:text-sm">Cặp Đôi / Tình Yêu</h3>
+                <p class="text-[11px] text-[var(--text-muted)]">Dành cho 2 người tìm hiểu hoặc đang yêu</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-pink-50 dark:bg-pink-950/60 text-pink-600">22 câu</span>
+          </div>
+
+          <div onclick="selectDeck('truth_or_dare')" class="cursor-pointer p-3.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] shadow-sm hover:border-[var(--accent)]/50 active:scale-[0.98] transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center text-lg">
+                ⚡
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-xs sm:text-sm">Thật Hay Thách</h3>
+                <p class="text-[11px] text-[var(--text-muted)]">Nói thật bí mật hoặc thực hiện thách đố</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600">Mini Game</span>
+          </div>
+
+          <div onclick="openAdultGate()" class="cursor-pointer p-3.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] shadow-sm hover:border-red-400 active:scale-[0.98] transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center text-lg">
+                🔥
+              </div>
+              <div class="text-left">
+                <div class="flex items-center gap-1.5">
+                  <h3 class="font-bold text-xs sm:text-sm text-rose-600">Chuyện Ấy</h3>
+                  <span class="text-[9px] uppercase font-extrabold px-1 py-0.2 rounded bg-rose-100 text-rose-600">18+</span>
+                </div>
+                <p class="text-[11px] text-[var(--text-muted)]">Thân mật và những câu hỏi nhạy cảm</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600">18 câu</span>
+          </div>
+        </div>
+
+        <!-- Color Themes Selector -->
+        <div class="p-3 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-between">
+          <div class="text-xs font-semibold text-[var(--text-muted)] flex items-center gap-1.5">
+            <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+            <span>Màu sắc</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="changeTheme('cream')" title="Kem Ấm" class="w-5 h-5 rounded-full bg-[#fcf9f2] border-2 border-orange-400 active:scale-125 transition"></button>
+            <button onclick="changeTheme('rose')" title="Hồng Nữ Tính" class="w-5 h-5 rounded-full bg-[#fbf2f4] border-2 border-pink-400 active:scale-125 transition"></button>
+            <button onclick="changeTheme('matcha')" title="Xanh Matcha" class="w-5 h-5 rounded-full bg-[#f3f6f1] border-2 border-green-600 active:scale-125 transition"></button>
+            <button onclick="changeTheme('night')" title="Đêm Tối" class="w-5 h-5 rounded-full bg-[#121316] border-2 border-zinc-500 active:scale-125 transition"></button>
+          </div>
+        </div>
+
+        <div class="text-center text-[10px] text-[var(--text-muted)] pt-1">
+          Phiên bản Mobile v2.0 • Vuốt hoặc chạm để trải nghiệm
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- SCREEN 2: REGULAR CARDS GAMEPLAY               -->
+      <!-- ============================================== -->
+      <section id="screen-cards" class="hidden flex-col h-full justify-between pb-12 space-y-3">
+        <!-- Deck sub-header -->
+        <div class="flex items-center justify-between pt-1">
+          <button onclick="goHome()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-xs font-semibold active:scale-90 transition">
+            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+            <span>Đổi bộ</span>
+          </button>
+
+          <div class="text-center">
+            <h2 id="active-deck-title" class="font-bold text-xs sm:text-sm tracking-tight">Hiểu Nhau Hơn</h2>
+            <span id="card-counter" class="text-[10px] text-[var(--text-muted)] font-medium">1 / 24</span>
+          </div>
+
+          <button onclick="shuffleCurrentDeck()" title="Xáo ngẫu nhiên" class="w-7 h-7 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center active:scale-90 transition">
+            <i data-lucide="shuffle" class="w-3 h-3"></i>
+          </button>
+        </div>
+
+        <!-- Touch-friendly 3D Flipping Card -->
+        <div class="relative w-full aspect-[3/4.2] max-h-[380px] flex items-center justify-center my-auto perspective-1000">
+          
+          <!-- Stack shadows for realistic deck feel -->
+          <div class="absolute inset-3 rounded-3xl bg-[var(--card-bg)] opacity-40 border border-[var(--card-border)] transform translate-y-2.5 scale-95 transition-transform duration-300"></div>
+          <div class="absolute inset-1.5 rounded-3xl bg-[var(--card-bg)] opacity-70 border border-[var(--card-border)] transform translate-y-1.5 scale-[0.98] transition-transform duration-300"></div>
+
+          <!-- Main Interactive Card -->
+          <div id="card-element" class="relative w-full h-full card-preserve-3d cursor-pointer card-shadow-layer rounded-3xl" onclick="toggleCardFlip()">
+            
+            <!-- CARD BACK -->
+            <div class="absolute inset-0 backface-hidden rounded-3xl bg-[var(--card-bg)] border border-[var(--card-border)] p-5 sm:p-6 flex flex-col justify-between items-center text-center overflow-hidden">
+              <div class="w-full flex justify-between text-[11px] text-[var(--text-muted)] opacity-60">
+                <span id="card-back-category">LÀM THÂN</span>
+                <span>✦</span>
+              </div>
+
+              <div class="my-auto space-y-2">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center border border-[var(--accent)]/30 text-xl font-bold shadow-inner">
+                  LT
+                </div>
+                <div class="serif-title text-xl font-bold text-[var(--text-main)]">
+                  Làm Thân
+                </div>
+                <p class="text-[11px] text-[var(--text-muted)] max-w-[190px] mx-auto leading-relaxed">
+                  Lắng nghe chân thành, kết nối yêu thương
+                </p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-3.5 py-1.5 rounded-full shadow-sm animate-pulse">
+                <i data-lucide="hand" class="w-3 h-3"></i>
+                <span>Chạm để lật bài</span>
+              </div>
+            </div>
+
+            <!-- CARD FRONT -->
+            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-[var(--card-bg)] border-2 border-[var(--accent)]/30 p-5 sm:p-6 flex flex-col justify-between overflow-hidden">
+              <div class="flex items-center justify-between text-xs">
+                <span id="card-tag" class="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-[9px] bg-[var(--accent-soft)] text-[var(--accent)]">
+                  CÂU HỎI
+                </span>
+                <button onclick="copyCurrentQuestion(event)" title="Sao chép câu này" class="p-1 rounded-md text-[var(--text-muted)] active:scale-90 transition">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <div class="my-auto py-2 text-center">
+                <p id="card-question-text" class="text-base sm:text-lg font-bold text-[var(--text-main)] leading-relaxed select-text">
+                  Điều gì ở bạn thân nhất khiến bạn cảm thấy luôn an tâm khi ở bên họ?
+                </p>
+              </div>
+
+              <div class="pt-2 border-t border-[var(--card-border)] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+                <span class="font-semibold">Làm Thân</span>
+                <span class="italic text-[10px]">Chạm để úp lại</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="flex items-center justify-between gap-2 pt-1">
+          <button onclick="prevCard()" class="flex-1 py-2.5 px-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] font-semibold text-xs flex items-center justify-center gap-1 shadow-sm active:scale-95 transition">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Câu trước</span>
+          </button>
+
+          <button onclick="toggleCardFlip()" class="py-2.5 px-4 rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent)]/30 font-bold text-xs flex items-center justify-center gap-1 shadow-sm active:scale-95 transition">
+            <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+            <span id="btn-flip-label">Lật bài</span>
+          </button>
+
+          <button onclick="nextCard()" class="flex-1 py-2.5 px-3 rounded-xl bg-[var(--accent)] text-white font-semibold text-xs flex items-center justify-center gap-1 shadow-md active:scale-95 transition">
+            <span>Câu tiếp</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- SCREEN 3: TRUTH OR DARE (THẬT HAY THÁCH)       -->
+      <!-- ============================================== -->
+      <section id="screen-truth-dare" class="hidden flex-col h-full justify-between pb-12 space-y-3">
+        <div class="flex items-center justify-between pt-1">
+          <button onclick="goHome()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-xs font-semibold active:scale-90 transition">
+            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+            <span>Trở về</span>
+          </button>
+
+          <div class="text-center">
+            <h2 class="font-bold text-xs sm:text-sm tracking-tight text-amber-600">Thật Hay Thách</h2>
+            <span class="text-[10px] text-[var(--text-muted)] font-medium">Bốc 1 lá bài bất kỳ</span>
+          </div>
+
+          <div class="w-7"></div>
+        </div>
+
+        <!-- Dual Deck Picker -->
+        <div id="tod-deck-picker" class="grid grid-cols-2 gap-3 my-auto">
+          <!-- Truth Deck -->
+          <button onclick="drawTod('truth')" class="group p-4 rounded-2xl bg-[var(--card-bg)] border-2 border-amber-300 dark:border-amber-700/60 shadow-md active:scale-95 transition flex flex-col items-center text-center justify-between h-64">
+            <div class="w-full flex justify-between text-[11px] text-amber-600 font-bold">
+              <span>SỰ THẬT</span>
+              <span>✦</span>
+            </div>
+            <div class="my-auto space-y-1">
+              <span class="text-3xl block group-hover:scale-110 transition-transform">🤍</span>
+              <h3 class="font-extrabold text-base text-[var(--text-main)]">NÓI THẬT</h3>
+              <p class="text-[10px] text-[var(--text-muted)]">Thú nhận bí mật</p>
+            </div>
+            <span class="w-full py-1.5 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-[11px] font-bold">
+              Rút Thật
+            </span>
+          </button>
+
+          <!-- Dare Deck -->
+          <button onclick="drawTod('dare')" class="group p-4 rounded-2xl bg-[var(--card-bg)] border-2 border-rose-300 dark:border-rose-700/60 shadow-md active:scale-95 transition flex flex-col items-center text-center justify-between h-64">
+            <div class="w-full flex justify-between text-[11px] text-rose-600 font-bold">
+              <span>THỬ THÁCH</span>
+              <span>⚡</span>
+            </div>
+            <div class="my-auto space-y-1">
+              <span class="text-3xl block group-hover:scale-110 transition-transform">🔥</span>
+              <h3 class="font-extrabold text-base text-[var(--text-main)]">THÁCH ĐỐ</h3>
+              <p class="text-[10px] text-[var(--text-muted)]">Làm trò hài hước</p>
+            </div>
+            <span class="w-full py-1.5 rounded-lg bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 text-[11px] font-bold">
+              Rút Thách
+            </span>
+          </button>
+        </div>
+
+        <!-- Result Card View -->
+        <div id="tod-result-view" class="hidden flex-col items-center my-auto w-full">
+          <div class="w-full aspect-[3/4] max-h-[360px] rounded-3xl bg-[var(--card-bg)] border-2 p-5 flex flex-col justify-between shadow-xl text-center" id="tod-result-card">
+            <div class="flex items-center justify-between">
+              <span id="tod-result-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
+                LÁ THẬT
+              </span>
+              <button onclick="copyTodQuestion()" class="p-1 rounded-md text-[var(--text-muted)] active:scale-90">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <div class="my-auto py-2">
+              <p id="tod-result-text" class="text-base sm:text-lg font-bold leading-relaxed">
+                Nội dung thử thách ở đây...
+              </p>
+            </div>
+
+            <div class="pt-2 border-t border-[var(--card-border)] flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+              <span>Làm Thân</span>
+              <span id="tod-result-flavor">Dũng cảm lên nào!</span>
+            </div>
+          </div>
+
+          <button onclick="resetTodDraw()" class="mt-4 w-full py-3 rounded-xl bg-[var(--text-main)] text-[var(--bg-main)] font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Rút lá bài khác</span>
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MOBILE NATIVE BOTTOM TAB BAR -->
+    <nav class="w-full py-2 px-6 border-t border-[var(--card-border)] bg-[var(--card-bg)]/95 backdrop-blur-md flex items-center justify-around shrink-0 z-30">
+      <button onclick="goHome()" class="flex flex-col items-center gap-1 text-[var(--accent)] active:scale-90 transition">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold">Chủ đề</span>
+      </button>
+
+      <button onclick="selectDeck('connection')" class="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-[var(--text-main)] active:scale-90 transition">
+        <i data-lucide="play-circle" class="w-4 h-4"></i>
+        <span class="text-[10px] font-semibold">Chơi nhanh</span>
+      </button>
+
+      <button onclick="selectDeck('truth_or_dare')" class="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-[var(--text-main)] active:scale-90 transition">
+        <i data-lucide="flame" class="w-4 h-4"></i>
+        <span class="text-[10px] font-semibold">Thách đố</span>
+      </button>
+
+      <button onclick="openDonateModal()" class="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-[var(--text-main)] active:scale-90 transition">
+        <i data-lucide="heart" class="w-4 h-4"></i>
+        <span class="text-[10px] font-semibold">Ủng hộ</span>
+      </button>
+    </nav>
+
+    <!-- HOME INDICATOR BAR (iPhone Home Bar) -->
+    <div class="w-full pb-2 pt-1 flex justify-center shrink-0 bg-[var(--card-bg)]">
+      <div class="w-32 h-1 bg-[var(--text-muted)]/30 rounded-full"></div>
+    </div>
+
+  </div>
+
+  <!-- MODALS -->
+  <div id="modal-age-gate" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-xs rounded-3xl bg-[var(--card-bg)] border border-[var(--card-border)] p-5 shadow-2xl text-center space-y-3">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl font-bold">
+        🔞
+      </div>
+      <div>
+        <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-500">Chỉ dành cho người lớn</span>
+        <h3 class="text-base font-bold text-[var(--text-main)] mt-0.5">Bạn và nhóm đã đủ 18 tuổi?</h3>
+        <p class="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
+          Bộ câu hỏi chứa nội dung riêng tư và tình cảm sâu kín. Vui lòng xác nhận trước khi tiếp tục.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1.5 pt-1">
+        <button onclick="confirmAdultGate()" class="w-full py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs active:scale-95 transition">
+          Tất cả đều đủ 18 tuổi
+        </button>
+        <button onclick="closeAdultGate()" class="w-full py-2.5 rounded-xl bg-gray-100 dark:bg-zinc-800 text-[var(--text-muted)] font-semibold text-xs active:scale-95 transition">
+          Chọn chủ đề khác
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-donate" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-xs rounded-3xl bg-[var(--card-bg)] border border-[var(--card-border)] p-5 shadow-2xl text-center space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-[11px] font-bold text-amber-600">☕ Ủng hộ tác giả</span>
+        <button onclick="closeDonateModal()" class="p-1 rounded-lg text-[var(--text-muted)]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div>
+        <h3 class="serif-title text-lg font-bold text-[var(--text-main)]">Mời mình ly cà phê</h3>
+        <p class="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
+          Sự ủng hộ của bạn là động lực để tụi mình cập nhật thêm nhiều bộ câu hỏi gắn kết mới!
+        </p>
+      </div>
+
+      <div class="p-2 bg-white rounded-xl border border-gray-200 inline-block mx-auto shadow-sm">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://lamthan.com" alt="QR Ngân hàng" class="w-32 h-32 object-contain rounded-lg">
+      </div>
+
+      <div class="text-[11px] font-mono text-[var(--text-muted)] bg-[var(--accent-soft)] p-2 rounded-xl flex items-center justify-between">
+        <span>MoMo / MBBank</span>
+        <button onclick="copyBankInfo()" class="font-bold text-[var(--accent)] hover:underline">Sao chép STK</button>
+      </div>
+
+      <button onclick="closeDonateModal()" class="w-full py-2 rounded-xl bg-[var(--text-main)] text-[var(--bg-main)] font-semibold text-xs active:scale-95 transition">
+        Cảm ơn bạn!
+      </button>
+    </div>
+  </div>
+
+  <!-- iOS INSTALL ON IPHONE MODAL (SHEET) -->
+  <div id="modal-ios-install" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="w-full max-w-sm rounded-t-[32px] sm:rounded-3xl bg-[var(--card-bg)] border border-[var(--card-border)] p-6 shadow-2xl text-center space-y-4 animate-in slide-in-from-bottom duration-300">
+      <div class="w-12 h-1 bg-zinc-300 dark:bg-zinc-700 rounded-full mx-auto -mt-2 mb-2 sm:hidden"></div>
+      
+      <div class="flex items-center justify-between pb-1 border-b border-[var(--card-border)]">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-[var(--accent)] text-white flex items-center justify-center text-xs font-bold">
+            LT
+          </div>
+          <span class="text-xs font-bold text-[var(--text-main)]">Cài đặt App trên iPhone</span>
+        </div>
+        <button onclick="closeIosInstallModal()" class="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-[var(--text-muted)] text-left leading-relaxed">
+        Thêm <strong class="text-[var(--text-main)]">Làm Thân</strong> vào màn hình chính iPhone để chơi mượt mà như một ứng dụng gốc mà không cần App Store:
+      </p>
+
+      <!-- 3 Steps Visual Guide -->
+      <div class="space-y-2.5 text-left text-xs">
+        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-[var(--accent-soft)]/60 border border-[var(--accent)]/15">
+          <span class="w-5 h-5 rounded-full bg-[var(--accent)] text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+          <div>
+            <span>Nhấn vào nút <strong>Chia sẻ</strong> (<i data-lucide="share" class="inline w-3.5 h-3.5 text-sky-600 align-text-bottom"></i> ô vuông có mũi tên) ở thanh Safari dưới đáy.</span>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-[var(--accent-soft)]/60 border border-[var(--accent)]/15">
+          <span class="w-5 h-5 rounded-full bg-[var(--accent)] text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+          <div>
+            <span>Cuộn xuống danh sách và chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen ⊞).</span>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-[var(--accent-soft)]/60 border border-[var(--accent)]/15">
+          <span class="w-5 h-5 rounded-full bg-[var(--accent)] text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+          <div>
+            <span>Nhấn <strong>"Thêm"</strong> (Add) ở góc phải trên cùng. Biểu tượng Làm Thân sẽ xuất hiện ngay trên iPhone của bạn!</span>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeIosInstallModal()" class="w-full py-2.5 rounded-xl bg-[var(--text-main)] text-[var(--bg-main)] font-bold text-xs active:scale-95 transition">
+        Tôi đã hiểu
+      </button>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-14 left-1/2 -translate-x-1/2 bg-zinc-900/95 text-white text-[11px] font-semibold px-3.5 py-2 rounded-full shadow-lg z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-y-3 flex items-center gap-1.5">
+    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+    <span id="toast-message">Đã sao chép!</span>
+  </div>
+
+  <script>
+    // Real-time mobile clock
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const clockEl = document.getElementById('phone-clock');
+      if (clockEl) clockEl.textContent = `${h}:${m}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Database of curated questions
+    const DECKS = {
+      connection: {
+        title: "Hiểu Nhau Hơn",
+        tag: "KẾT NỐI",
+        questions: [
+          "Điều gì ở bạn thân nhất khiến bạn cảm thấy luôn an tâm khi ở bên họ?",
+          "Lần gần nhất bạn khóc vì một lý do bất ngờ là khi nào?",
+          "Nếu ngày mai bạn có thể thức dậy ở bất kỳ thành phố nào trên thế giới, bạn chọn ở đâu?",
+          "Một thói quen kỳ quặc nhưng dễ thương mà bạn có là gì?",
+          "Kỷ niệm tuổi thơ nào đến giờ nghĩ lại bạn vẫn bất giác mỉm cười?",
+          "Ấn tượng đầu tiên của bạn về người đang ngồi đối diện là gì?",
+          "Nếu tự thưởng cho bản thân một ngày trọn vẹn không điện thoại, bạn sẽ làm gì?",
+          "Lời khen chân thành nhất mà bạn từng nhận được là gì?",
+          "Món ăn an ủi tâm hồn (comfort food) số 1 của bạn vào một ngày tồi tệ?",
+          "Điều dũng cảm nhất mà bạn từng làm trong năm vừa qua?",
+          "Bạn thấy mình giống bố hay mẹ nhiều hơn ở điểm nào?",
+          "Một bài hát mà mỗi lần nghe, bạn lại nhớ về một khoảng thời gian cụ thể?",
+          "Nếu có thể trò chuyện 1 tiếng với bản thân năm 15 tuổi, bạn sẽ dặn điều gì?",
+          "Điều gì có thể khiến bạn lập tức có thiện cảm với một người lạ?",
+          "Bạn thích được yêu thương bằng cách nào nhất (lời nói, cái ôm, hay sự chăm sóc)?",
+          "Nỗi sợ vô lý nhất mà bạn từng có là gì?",
+          "Lần gần nhất bạn thử một điều hoàn toàn mới là gì?",
+          "Bộ phim bạn có thể xem lại nhiều lần mà không thấy chán?",
+          "Một nguyên tắc sống mà bạn kiên quyết không bao giờ phá vỡ?",
+          "Bạn mong muốn năm nay mình sẽ học thêm được kỹ năng gì mới?",
+          "Ba tính từ mà bạn nghĩ bạn bè thân thiết sẽ dùng để miêu tả về bạn?",
+          "Khoảnh khắc nào trong ngày khiến bạn cảm thấy bình yên nhất?",
+          "Bạn có tin vào định mệnh hay mọi thứ đều do con người tự tạo ra?",
+          "Điều bạn cảm thấy biết ơn nhất ở thời điểm hiện tại?"
+        ]
+      },
+      deep: {
+        title: "Sâu Sắc & Tâm Sự",
+        tag: "TÂM SỰ",
+        questions: [
+          "Có điều gì bạn đang phải tự gồng gánh một mình mà chưa từng nói với ai?",
+          "Thất bại nào trong quá khứ đã dạy cho bạn bài học đắt giá nhất?",
+          "Bạn sợ sự cô đơn hay sợ ở cạnh những người không hiểu mình hơn?",
+          "Nếu biết trước hôm nay là ngày cuối cùng được sống, bạn sẽ dành nó cho ai?",
+          "Điều gì bạn từng tha thứ cho người khác nhưng bản thân lại khó quên nhất?",
+          "Bạn có đang hài lòng với phiên bản hiện tại của chính mình không?",
+          "Nỗi sợ lớn nhất về tương lai của bạn là gì?",
+          "Khoảnh khắc nào bạn nhận ra mình đã thực sự phải trưởng thành?",
+          "Có lời xin lỗi nào bạn nợ một ai đó mà chưa có cơ hội nói ra?",
+          "Bạn đánh giá thế nào là một cuộc sống thực sự có ý nghĩa?",
+          "Khi buồn nhất, bạn chọn trốn vào góc riêng hay tìm người sẻ chia?",
+          "Điều gì khiến bạn dễ rơi nước mắt nhất?",
+          "Giấc mơ thời niên thiếu của bạn có còn cháy bỏng không?",
+          "Bạn đã bao giờ cảm thấy lạc lõng giữa đám đông rất thân thiết chưa?",
+          "Bài học lớn nhất về tình bạn mà năm tháng dạy cho bạn?",
+          "Nếu có một chiếc gương soi thấy tâm hồn, bạn nghĩ mình sẽ thấy gì?",
+          "Có quyết định nào trong đời bạn từng rất hối hận nhưng giờ lại cảm ơn nó?",
+          "Điều gì giữ bạn tiếp tục kiên trì sau những lần kiệt sức?",
+          "Bạn muốn người khác nhớ đến mình sau này như một người thế nào?",
+          "Điều khó khăn nhất trong việc yêu thương bản thân đối với bạn là gì?"
+        ]
+      },
+      couple: {
+        title: "Cặp Đôi / Tình Yêu",
+        tag: "TÌNH YÊU",
+        questions: [
+          "Khoảnh khắc chính xác nào khiến bạn nhận ra mình đã rung động với đối phương?",
+          "Hành động nhỏ nào của đối phương khiến trái tim bạn tan chảy?",
+          "Nếu có thể cùng nhau đi du lịch chỉ có hai người, nơi lý tưởng nhất là đâu?",
+          "Điều gì ở tính cách của đối phương khiến bạn cảm thấy được bù đắp?",
+          "Bạn thích cách đối phương dỗ dành mình khi giận dỗi như thế nào?",
+          "Kỷ niệm hẹn hò nào đáng nhớ và ngọt ngào nhất giữa hai đứa?",
+          "Một bài hát mà bạn thấy giai điệu sinh ra là để dành cho câu chuyện hai người?",
+          "Có điều gì bạn muốn đối phương khen mình nhiều hơn không?",
+          "Một buổi tối lãng mạn hoàn hảo theo định nghĩa của bạn?",
+          "Điều bạn trân trọng nhất ở người yêu hiện tại là gì?",
+          "Cách thể hiện tình cảm của bạn là gì (Words of Affirmation, Touch, Acts of Service...)?",
+          "Khi hai đứa bất đồng quan điểm, bạn mong muốn giải quyết bằng cách nào?",
+          "Trang phục hoặc phong cách nào của đối phương làm bạn mê mẩn nhất?",
+          "Bạn cảm thấy được bảo vệ và an toàn nhất khi nào?",
+          "Một thói quen ngộ nghĩnh của đối phương mà chỉ riêng bạn biết?",
+          "Ước mơ chung lớn nhất mà bạn muốn hai đứa cùng xây dựng trong tương lai?",
+          "Lần gần nhất bạn nhìn đối phương và nghĩ: 'May mà có người này bên cạnh'?",
+          "Điều gì bạn muốn cùng người ấy thử làm lần đầu tiên?",
+          "Nếu viết một bức thư tình 3 câu cho đối phương ngay bây giờ, bạn sẽ viết gì?",
+          "Bạn nghĩ tình yêu bền vững cần nhất là sự thấu hiểu hay sự hy sinh?",
+          "Nụ hôn đầu tiên của hai đứa để lại cảm xúc gì trong bạn?",
+          "Điều ngọt ngào nhất đối phương từng làm mà bạn không bao giờ quên?"
+        ]
+      },
+      adult: {
+        title: "Chuyện Ấy (18+)",
+        tag: "18+ THÂN MẬT",
+        questions: [
+          "Một cử chỉ âu yếm nhỏ nhưng có thể kích thích toàn bộ giác quan của bạn?",
+          "Địa điểm hoặc không gian kỳ lạ/lãng mạn nhất bạn từng tưởng tượng về chuyện ấy?",
+          "Bạn là người thích chủ động dẫn dắt hay thích được đối phương làm chủ cuộc chơi?",
+          "Lời nói thì thầm nào bên tai khiến bạn dễ mất kiểm soát nhất?",
+          "Bạn thích màn dạo đầu nhẹ nhàng chậm rãi hay nồng nhiệt cháy bỏng?",
+          "Trang phục ngủ quyến rũ nhất của đối phương mà bạn muốn thấy?",
+          "Có điều gì trong chuyện thân mật bạn rất tò mò nhưng chưa dám thử?",
+          "Bộ phận nào trên cơ thể bạn nhạy cảm nhất với những cái chạm nhẹ?",
+          "Bạn nghĩ sự kết nối cảm xúc đóng bao nhiêu phần trăm trong sự thăng hoa thể xác?",
+          "Một nụ hôn kiểu Pháp sâu lắng hay những nụ hôn vụn vặt khắp cơ thể?",
+          "Yếu tố ánh sáng lý tưởng nhất: Đèn vàng dịu mờ, nến thơm hay bóng tối hoàn toàn?",
+          "Sau cuộc vui, bạn thích nằm ôm nhau trò chuyện hay chìm vào giấc ngủ ngay?",
+          "Điều quyến rũ nhất ở đối phương khi hai người chỉ còn lại sự riêng tư?",
+          "Kỷ niệm nồng cháy nhất mà mỗi khi nhớ lại bạn vẫn thấy nóng bừng mặt?",
+          "Một câu nói gợi cảm mà bạn muốn nghe lúc cao trào?",
+          "Bạn thích trải nghiệm cảm giác mới lạ hay sự thân thuộc quen thuộc?",
+          "Điều gì có thể ngay lập tức làm tụt cảm xúc của bạn khi đang thân mật?",
+          "Khoảnh khắc đối phương cắn nhẹ vào môi/tai có làm bạn run rẩy?"
+        ]
+      },
+      tod_truth: [
+        "Bạn đã từng nói dối về chuyện gì lớn nhất với người thân?",
+        "Người yêu cũ nào bạn vẫn thỉnh thoảng tìm trang cá nhân để xem?",
+        "Bí mật kỳ cục nhất của bạn mà chưa từng nói với ai trong phòng này?",
+        "Ấn tượng xấu nhất bạn từng có về một người trong nhóm là gì?",
+        "Bạn đã bao giờ thích thầm người yêu của bạn mình chưa?",
+        "Tật xấu khó bỏ nhất của bạn khi ở một mình trong phòng ngủ?",
+        "Tin nhắn xấu hổ nhất mà bạn từng gửi nhầm cho người khác?",
+        "Nếu phải hẹn hò với một người đang có mặt ở đây, bạn chọn ai?",
+        "Lần gần nhất bạn nói dối để hủy một cuộc hẹn là gì?",
+        "Bạn đã từng khóc vì bị từ chối tình cảm bao nhiêu lần?"
+      ],
+      tod_dare: [
+        "Gọi điện cho một người bất kỳ trong danh bạ và hát chúc mừng sinh nhật rồi tắt máy.",
+        "Mở story Instagram/Facebook gần nhất và diễn lại điệu bộ của người trong ảnh.",
+        "Để người bên cạnh tự chọn một icon bất kỳ và gửi cho người bạn nhắn tin gần nhất.",
+        "Nói bằng giọng em bé hoặc giọng robot trong 3 lượt tiếp theo.",
+        "Nhìn thẳng vào mắt người đối diện trong 45 giây mà không được cười.",
+        "Kể một trò cười dở nhất mà bạn biết, nếu không ai cười bạn phải hít đất 5 cái.",
+        "Bắt chước dáng đi và điệu cười của người ngồi bên tay phải.",
+        "Để người khác xem album ảnh 'Gần đây' trong điện thoại bạn trong 20 giây.",
+        "Uống cạn một cốc nước lọc chỉ bằng một hơi duy nhất.",
+        "Làm động tác người mẫu catwalk một vòng quanh phòng."
+      ]
+    };
+
+    let currentDeckKey = 'connection';
+    let currentDeckQuestions = [];
+    let currentCardIndex = 0;
+    let isFlipped = false;
+    let isSoundEnabled = true;
+    let audioSynth = null;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    // Trigger subtle iOS Taptic-like Haptic Feedback
+    function triggerHaptic() {
+      if ('vibrate' in navigator) {
+        try {
+          navigator.vibrate(10);
+        } catch (e) {}
+      }
+    }
+
+    function initAudio() {
+      if (!audioSynth && typeof Tone !== 'undefined') {
+        try {
+          audioSynth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 }
+          }).toDestination();
+          audioSynth.volume.value = -12;
+        } catch(e) {}
+      }
+    }
+
+    function playSound(type) {
+      triggerHaptic();
+      if (!isSoundEnabled) return;
+      try {
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        initAudio();
+        if (audioSynth) {
+          if (type === 'flip') {
+            audioSynth.triggerAttackRelease(["E5", "G5"], "32n");
+          } else if (type === 'next') {
+            audioSynth.triggerAttackRelease(["C5", "E5"], "32n");
+          } else if (type === 'click') {
+            audioSynth.triggerAttackRelease(["A4"], "64n");
+          }
+        }
+      } catch (err) {}
+    }
+
+    function openIosInstallModal() {
+      playSound('click');
+      document.getElementById('modal-ios-install').classList.remove('hidden');
+    }
+
+    function closeIosInstallModal() {
+      playSound('click');
+      document.getElementById('modal-ios-install').classList.add('hidden');
+    }
+
+    // Auto-detect if user is already in standalone iOS app mode
+    if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) {
+      const installBtn = document.getElementById('btn-ios-install');
+      if (installBtn) installBtn.style.display = 'none';
+    }
+
+    function changeTheme(themeName) {
+      const shell = document.querySelector('.mobile-shell');
+      shell.className = `mobile-shell theme-${themeName}`;
+      playSound('click');
+      showToast(`Đã đổi giao diện!`);
+    }
+
+    document.getElementById('btn-toggle-sound').addEventListener('click', () => {
+      isSoundEnabled = !isSoundEnabled;
+      const icon = document.getElementById('sound-icon');
+      if (isSoundEnabled) {
+        icon.setAttribute('data-lucide', 'volume-2');
+        showToast('Đã bật âm thanh');
+        playSound('click');
+      } else {
+        icon.setAttribute('data-lucide', 'volume-x');
+        showToast('Đã tắt âm thanh');
+      }
+      lucide.createIcons();
+    });
+
+    function selectDeck(key) {
+      playSound('click');
+      if (key === 'truth_or_dare') {
+        showScreen('screen-truth-dare');
+        resetTodDraw();
+        return;
+      }
+
+      currentDeckKey = key;
+      const deckData = DECKS[key];
+      currentDeckQuestions = [...deckData.questions].sort(() => Math.random() - 0.5);
+      currentCardIndex = 0;
+      isFlipped = false;
+
+      document.getElementById('active-deck-title').textContent = deckData.title;
+      document.getElementById('card-back-category').textContent = deckData.tag;
+      document.getElementById('card-tag').textContent = deckData.tag;
+
+      updateCardDisplay();
+      showScreen('screen-cards');
+    }
+
+    function showScreen(screenId) {
+      document.getElementById('screen-home').classList.add('hidden');
+      document.getElementById('screen-cards').classList.add('hidden');
+      document.getElementById('screen-truth-dare').classList.add('hidden');
+      
+      const target = document.getElementById(screenId);
+      target.classList.remove('hidden');
+      target.classList.add('flex');
+    }
+
+    function goHome() {
+      playSound('click');
+      showScreen('screen-home');
+    }
+
+    document.getElementById('btn-brand-home').addEventListener('click', goHome);
+
+    function toggleCardFlip() {
+      const card = document.getElementById('card-element');
+      isFlipped = !isFlipped;
+      playSound('flip');
+      
+      if (isFlipped) {
+        card.classList.add('card-flipped');
+        document.getElementById('btn-flip-label').textContent = 'Úp bài';
+      } else {
+        card.classList.remove('card-flipped');
+        document.getElementById('btn-flip-label').textContent = 'Lật bài';
+      }
+    }
+
+    function updateCardDisplay() {
+      const card = document.getElementById('card-element');
+      isFlipped = false;
+      card.classList.remove('card-flipped');
+      document.getElementById('btn-flip-label').textContent = 'Lật bài';
+
+      const total = currentDeckQuestions.length;
+      document.getElementById('card-counter').textContent = `${currentCardIndex + 1} / ${total}`;
+      document.getElementById('card-question-text').textContent = currentDeckQuestions[currentCardIndex];
+    }
+
+    function nextCard() {
+      if (currentCardIndex < currentDeckQuestions.length - 1) {
+        currentCardIndex++;
+      } else {
+        currentCardIndex = 0;
+        showToast("Đã xem hết bộ thẻ! Lặp lại từ đầu");
+      }
+      playSound('next');
+      updateCardDisplay();
+    }
+
+    function prevCard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+      } else {
+        currentCardIndex = currentDeckQuestions.length - 1;
+      }
+      playSound('next');
+      updateCardDisplay();
+    }
+
+    function shuffleCurrentDeck() {
+      playSound('click');
+      currentDeckQuestions = [...currentDeckQuestions].sort(() => Math.random() - 0.5);
+      currentCardIndex = 0;
+      updateCardDisplay();
+      showToast("Đã xáo bài ngẫu nhiên!");
+    }
+
+    // Touch Swipe Event Listeners
+    const cardEl = document.getElementById('card-element');
+    cardEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    cardEl.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) {
+          nextCard();
+        } else {
+          prevCard();
+        }
+      }
+    }, { passive: true });
+
+    function drawTod(type) {
+      playSound('flip');
+      const list = type === 'truth' ? DECKS.tod_truth : DECKS.tod_dare;
+      const randomItem = list[Math.floor(Math.random() * list.length)];
+
+      const resultBadge = document.getElementById('tod-result-badge');
+      const resultCard = document.getElementById('tod-result-card');
+      const resultText = document.getElementById('tod-result-text');
+      const resultFlavor = document.getElementById('tod-result-flavor');
+
+      if (type === 'truth') {
+        resultBadge.textContent = 'LÁ SỰ THẬT 🤍';
+        resultBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300';
+        resultCard.style.borderColor = 'rgba(217, 119, 6, 0.4)';
+        resultFlavor.textContent = 'Hãy nói thật lòng nhé!';
+      } else {
+        resultBadge.textContent = 'LÁ THÁCH ĐỐ ⚡';
+        resultBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300';
+        resultCard.style.borderColor = 'rgba(225, 29, 72, 0.4)';
+        resultFlavor.textContent = 'Không được rút lui!';
+      }
+
+      resultText.textContent = randomItem;
+
+      document.getElementById('tod-deck-picker').classList.add('hidden');
+      document.getElementById('tod-result-view').classList.remove('hidden');
+      document.getElementById('tod-result-view').classList.add('flex');
+    }
+
+    function resetTodDraw() {
+      playSound('click');
+      document.getElementById('tod-result-view').classList.add('hidden');
+      document.getElementById('tod-result-view').classList.remove('flex');
+      document.getElementById('tod-deck-picker').classList.remove('hidden');
+    }
+
+    function openAdultGate() {
+      playSound('click');
+      document.getElementById('modal-age-gate').classList.remove('hidden');
+    }
+
+    function closeAdultGate() {
+      playSound('click');
+      document.getElementById('modal-age-gate').classList.add('hidden');
+    }
+
+    function confirmAdultGate() {
+      closeAdultGate();
+      selectDeck('adult');
+    }
+
+    function openDonateModal() {
+      playSound('click');
+      document.getElementById('modal-donate').classList.remove('hidden');
+    }
+
+    function closeDonateModal() {
+      playSound('click');
+      document.getElementById('modal-donate').classList.add('hidden');
+    }
+
+    document.getElementById('btn-open-donate').addEventListener('click', openDonateModal);
+
+    function copyToClipboard(text, successMessage = "Đã sao chép!") {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMessage);
+      } catch (err) {
+        showToast("Không thể sao chép");
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function copyCurrentQuestion(e) {
+      if (e) e.stopPropagation();
+      const question = document.getElementById('card-question-text').textContent;
+      copyToClipboard(`" ${question.trim()} " - Làm Thân`);
+    }
+
+    function copyTodQuestion() {
+      const question = document.getElementById('tod-result-text').textContent;
+      copyToClipboard(`" ${question.trim()} " - Làm Thân (Thật hay Thách)`);
+    }
+
+    function copyBankInfo() {
+      copyToClipboard("LAMTHAN - 0987654321 (Vietcombank)", "Đã chép số tài khoản!");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
